@@ -106,14 +106,7 @@
   padding: var(--space-xl) var(--space-md);
   overflow: hidden;
   margin: 0;
-  /* Wash is on the section so it stays flush with the top edge (no “sliding” layer) */
-  background-color: #f6f5f8;
-  background-image: linear-gradient(
-    135deg,
-    rgba(102, 126, 234, 0.05) 0%,
-    rgba(118, 75, 162, 0.04) 50%,
-    rgba(240, 147, 251, 0.04) 100%
-  );
+  background-color: #0f172a;
   background-attachment: scroll;
 }
 
@@ -122,8 +115,25 @@
   inset: 0;
   z-index: 0;
   pointer-events: none;
-  /* Color wash lives on .hero; this layer only carries the grain texture */
-  background: transparent;
+  background-color: #0f172a;
+  background-image: url("/hero-vinyl-bg.png");
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+}
+
+/* Darken photo so headline stays readable */
+.hero-background::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  background: linear-gradient(
+    180deg,
+    rgba(15, 23, 42, 0.35) 0%,
+    rgba(15, 23, 42, 0.55) 40%,
+    rgba(15, 23, 42, 0.72) 100%
+  );
 }
 
 .hero-grain {
@@ -132,14 +142,16 @@
   left: 0;
   width: 100%;
   height: 100%;
+  z-index: 2;
   background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 400 400' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
-  opacity: 0.03;
+  opacity: 0.06;
   mix-blend-mode: overlay;
+  pointer-events: none;
 }
 
 .hero-content {
   position: relative;
-  z-index: 1;
+  z-index: 3;
   max-width: 900px;
   text-align: center;
   animation: fadeInUp 800ms var(--transition-medium) both;
@@ -152,11 +164,15 @@
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.05em;
-  color: var(--color-vinyl);
-  background: var(--color-vinyl-light);
+  color: #f8fafc;
+  background: rgba(255, 255, 255, 0.12);
+  border: 1px solid rgba(255, 255, 255, 0.28);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
   padding: 0.5rem 1.25rem;
   border-radius: 100px;
   margin-bottom: var(--space-md);
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.35);
   animation: fadeInUp 800ms 200ms var(--transition-medium) both;
 }
 
@@ -164,27 +180,29 @@
   font-family: var(--font-body);
   font-size: clamp(3rem, 8vw, 5.5rem);
   font-weight: 700;
-  color: var(--color-dark);
+  color: #ffffff;
   line-height: 1.05;
   margin-bottom: var(--space-md);
+  text-shadow: 0 2px 28px rgba(0, 0, 0, 0.45), 0 1px 3px rgba(0, 0, 0, 0.5);
   animation: fadeInUp 800ms 300ms var(--transition-medium) both;
 }
 
 .hero-title-accent {
   display: block;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
+  color: #e9d5ff;
+  background: none;
+  -webkit-text-fill-color: #e9d5ff;
+  text-shadow: 0 2px 24px rgba(0, 0, 0, 0.5), 0 0 40px rgba(147, 51, 234, 0.35);
 }
 
 .hero-subtitle {
   font-family: var(--font-body);
   font-size: clamp(1.125rem, 2.5vw, 1.375rem);
-  color: var(--color-gray);
+  color: rgba(241, 245, 249, 0.94);
   line-height: 1.6;
   max-width: 700px;
   margin: 0 auto var(--space-md);
+  text-shadow: 0 1px 16px rgba(0, 0, 0, 0.45);
   animation: fadeInUp 800ms 400ms var(--transition-medium) both;
 }
 
@@ -193,13 +211,15 @@
   bottom: var(--space-md);
   left: 50%;
   transform: translateX(-50%);
+  z-index: 3;
   display: flex;
   flex-direction: column;
   align-items: center;
   gap: 0.5rem;
-  color: var(--color-gray);
+  color: rgba(255, 255, 255, 0.88);
   font-size: 0.875rem;
   font-family: var(--font-body);
+  text-shadow: 0 1px 8px rgba(0, 0, 0, 0.45);
   animation: bounce 2s infinite;
 }
 
@@ -277,6 +297,11 @@
   background: var(--color-light);
 }
 
+/* Wider content area so two columns read large on desktop */
+.products .container {
+  max-width: 1320px;
+}
+
 .product-grid {
   display: grid;
   grid-template-columns: 1fr;
@@ -286,54 +311,30 @@
 @media (min-width: 700px) {
   .product-grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
-}
-
-/* Four cards in one row on full desktop; tighten type so it fits (5th product: widen breakpoint or use repeat(5, …)) */
-@media (min-width: 1180px) {
-  .product-grid {
-    grid-template-columns: repeat(4, minmax(0, 1fr));
-    gap: var(--space-sm);
+    gap: var(--space-lg);
   }
 
   .products .product-card-inner {
-    padding: var(--space-sm);
-  }
-
-  .products .product-icon {
-    width: 48px;
-    height: 48px;
-    margin-bottom: var(--space-xs);
-  }
-
-  .products .product-icon svg {
-    width: 48px;
-    height: 48px;
+    padding: var(--space-lg);
   }
 
   .products .product-title {
-    font-size: 1.25rem;
+    font-size: clamp(1.75rem, 2.2vw, 2rem);
   }
 
   .products .product-description {
-    font-size: 0.875rem;
-    line-height: 1.5;
-    margin-bottom: 0.5rem;
-  }
-
-  .products .product-features {
-    margin: 0.5rem 0;
+    font-size: 1.0625rem;
+    line-height: 1.65;
   }
 
   .products .product-features li {
-    font-size: 0.8125rem;
-    padding: 0.25rem 0;
-    padding-left: 1.35rem;
+    font-size: 1rem;
+    padding-block: 0.45rem;
+    padding-inline: 0;
   }
 
   .products .product-link {
-    font-size: 0.875rem;
-    margin-top: 0.5rem;
+    font-size: 1.0625rem;
   }
 }
 
@@ -420,16 +421,20 @@
   font-family: var(--font-body);
   font-size: 0.9375rem;
   color: var(--color-gray);
+  line-height: 1.5;
   padding: 0.375rem 0;
-  padding-left: 1.5rem;
-  position: relative;
+  display: grid;
+  grid-template-columns: 1.35em 1fr;
+  column-gap: 0.5rem;
+  align-items: start;
 }
 
 .product-features li::before {
   content: "✓";
-  position: absolute;
-  left: 0;
   font-weight: 700;
+  line-height: 1.5;
+  text-align: center;
+  margin-top: 0.06em;
 }
 
 .vinyl-card .product-features li::before {
@@ -796,5 +801,30 @@ summary:focus-visible {
   .cta-section {
     background: white;
     color: black;
+  }
+
+  .hero-badge {
+    color: #0f172a;
+    background: #f1f5f9;
+    border: 1px solid #cbd5e1;
+    text-shadow: none;
+    backdrop-filter: none;
+  }
+
+  .hero-title {
+    color: #0f172a;
+    text-shadow: none;
+  }
+
+  .hero-title-accent {
+    color: #5b21b6;
+    -webkit-text-fill-color: #5b21b6;
+    text-shadow: none;
+  }
+
+  .hero-subtitle,
+  .hero-scroll-indicator {
+    color: #334155;
+    text-shadow: none;
   }
 }
